@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Peperoncini Premium | Oli & Polveri</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    :root {
+      --primary: #d32f2f;
+      --primary-dark: #b71c1c;
+      --accent: #ff5722;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-main: #2c3e50;
+      --text-light: #636e72;
+      --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      background-image: radial-gradient(circle at top center, #ffebee 0%, transparent 70%);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    header {
+      background: transparent;
+      padding: 2.5em 1em 1em 1em;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-weight: 800;
+      font-size: 2.2em;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+    header p {
+      color: var(--text-light);
+      font-size: 1em;
+      margin-top: 0.5em;
+      font-weight: 400;
+    }
+
+    /* ICONA CARRELLO IN ALTO A DESTRA */
+    .cart-icon-wrapper {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 999;
+    }
+    .cart-icon {
+      position: relative;
+      background: #ffffff;
+      border-radius: 999px;
+      padding: 0.6em 0.9em;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .cart-icon i {
+      color: var(--primary);
+      font-size: 1.2em;
+    }
+    .cart-label {
+      font-size: 0.9em;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -4px;
+      background: #ff0000;
+      color: #fff;
+      border-radius: 999px;
+      padding: 0 6px;
+      font-size: 0.7em;
+      font-weight: 700;
+      min-width: 18px;
+      text-align: center;
+      display: none;
+    }
+
+    /* PANNELLO CARRELLO */
+    .cart-panel {
+      position: fixed;
+      top: 60px;
+      right: 15px;
+      width: 320px;
+      max-height: 75vh;
+      background: #ffffff;
+      box-shadow: var(--shadow);
+      border-radius: 16px;
+      padding: 1em;
+      z-index: 998;
+      display: none;
+      overflow-y: auto;
+    }
+    .cart-panel h3 {
+      margin: 0 0 0.5em 0;
+      font-size: 1.1em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cart-close {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 1em;
+      color: var(--text-light);
+    }
+    .cart-items {
+      font-size: 0.9em;
+      margin-bottom: 0.8em;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4em;
+      gap: 6px;
+    }
+    .cart-item-name {
+      flex: 1;
+      margin-right: 8px;
+    }
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85em;
+    }
+    .qty-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.8em;
+      padding: 0;
+    }
+    .qty-display {
+      min-width: 20px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .cart-item-sub {
+      font-weight: 600;
+      font-size: 0.9em;
+      white-space: nowrap;
+    }
+    .cart-summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9em;
+      margin-top: 0.2em;
+    }
+    .cart-summary-line strong {
+      font-weight: 700;
+    }
+    .cart-total {
+      font-weight: 700;
+      margin-top: 0.6em;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95em;
+    }
+    .cart-empty {
+      font-size: 0.9em;
+      color: var(--text-light);
+      text-align: center;
+      margin: 1em 0;
+    }
+    .cart-panel-footer {
+      margin-top: 0.8em;
+      display: flex;
+      gap: 0.5em;
+    }
+    .cart-panel-footer button {
+      flex: 1;
+      font-size: 0.85em;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 1em auto 4em auto;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 2.5em;
+      position: relative;
+      overflow: hidden;
+    }
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1em;
+      margin-top: 2em;
+    }
+    .category-header:first-of-type { margin-top: 0; }
+    .category-header h2 {
+      font-size: 1.4em;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+    .category-header i {
+      color: var(--primary);
+      background: #ffebee;
+      padding: 8px;
+      border-radius: 50%;
+      font-size: 0.9em;
+    }
+    .product-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.5em 0;
+      border: 1px solid #eee;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .product-list li {
+      padding: 0.8em 1.2em;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.95em;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      transition: background 0.2s;
+    }
+    .product-list li:last-child { border-bottom: none; }
+    .product-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .product-main:hover {
+      color: var(--primary);
+    }
+    .product-list li i {
+      font-size: 0.8em;
+      color: #e0e0e0;
+    }
+    .product-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 10px;
+      white-space: nowrap;
+    }
+    .qty-inline {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85em;
+    }
+    .qty-inline span {
+      min-width: 20px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .btn-add-cart {
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 999px;
+      padding: 0.35em 0.8em;
+      font-size: 0.8em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-add-cart:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      padding: 1em 1.4em;
+      border-radius: 12px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(211, 47, 47, 0.2);
+      white-space: nowrap;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(211, 47, 47, 0.3);
+    }
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .btn-outline {
+      display: block;
+      width: 100%;
+      background: transparent;
+      color: var(--text-main);
+      border: 2px solid #eee;
+      padding: 0.9em;
+      border-radius: 12px;
+      font-size: 0.95em;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      margin-top: 1em;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover {
+      border-color: var(--text-main);
+      background: #fff;
+    }
+    .form-page {
+      display: none;
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .form-back-wrapper {
+      display: none;
+      margin-top: 1.5em;
+      margin-bottom: 0.8em;
+    }
+    .form-back-arrow {
+      cursor: pointer;
+      color: var(--text-main);
+      font-size: 1.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .form-back-arrow span {
+      font-size: 0.9em;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.85em;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.5em;
+      margin-top: 1.2em;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.9em;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1em;
+      color: var(--text-main);
+      background: #fafafa;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+    }
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .checkout-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 1.5em;
+      flex-wrap: wrap;
+    }
+    .checkout-total-text {
+      font-size: 0.95em;
+      color: var(--text-main);
+    }
+    .checkout-total-text strong {
+      font-size: 1.05em;
+    }
+
+    .footer-contacts {
+      text-align: center;
+      margin-top: 3em;
+      padding-top: 2em;
+      border-top: 1px solid #eee;
+    }
+    .contact-toggle {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 0.9em;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .contact-box {
+      display: none;
+      margin-top: 1em;
+      background: #f1f3f5;
+      padding: 1em;
+      border-radius: 12px;
+      font-size: 0.9em;
+    }
+    .spicy-level {
+      letter-spacing: 2px;
+      font-size: 1.4em;
+      margin-bottom: 0.2em;
+      line-height: 1em;
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 1.5em;
+      }
+      body { background: white; }
+      header { padding-top: 2.5em; }
+      .cart-panel {
+        right: 8px;
+        width: 90%;
+      }
+      .form-back-wrapper {
+        margin-top: 1em;
+      }
+      .checkout-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .checkout-footer .btn-primary {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+  <script>
+    function showCheckoutForm() {
+      if (cart.length === 0) return;
+      hideAll();
+      document.getElementById('checkoutForm').style.display = "block";
+      document.getElementById('checkoutBackWrapper').style.display = "block";
+      window.scrollTo(0,0);
+      const productsField = document.getElementById('prodottiSelezionati');
+      productsField.value = cart.map(item => {
+        return item.name + " (" + item.type + ") x" + item.qty;
+      }).join(" | ");
+      document.getElementById('checkoutTotalText').textContent = formatCheckoutTotalText();
+    }
+    function goBack() {
+      document.getElementById('mainpage').style.display = "block";
+      document.getElementById('checkoutForm').style.display = "none";
+      document.getElementById('checkoutBackWrapper').style.display = "none";
+      hideAllDetails();
+      window.scrollTo(0,0);
+    }
+    function toggleContatti() {
+      var box = document.getElementById('contactBox');
+      box.style.display = box.style.display === "block" ? "none" : "block";
+    }
+   function handleFormSubmit(event) {
+  event.preventDefault();
+  var form = event.target;
+  var data = new FormData(form);
+  var button = form.querySelector("button[type='submit']");
+  var originalText = button.innerHTML;
+  button.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Elaborazione...';
+  button.disabled = true;
+  button.style.opacity = "0.8";
+
+  // Calcola il totale dal carrello (prodotti + spedizione)
+  const { grandTotal } = getTotals(); // es. 37
+  const amountCents = grandTotal * 100; // es. 3700
+
+  fetch("https://formspree.io/f/movbbypn", {
+    method: "POST",
+    body: data,
+    headers: { 'Accept': 'application/json' }
+  })
+  .then(() => {
+    // Reindirizzo a Revolut con l'importo esatto del carrello
+    window.location.href = "https://revolut.me/pangiu?currency=EUR&amount=" + amountCents;
+  })
+  .catch(() => {
+    alert("Errore di connessione. Verrai reindirizzato comunque al pagamento.");
+    window.location.href = "https://revolut.me/pangiu?currency=EUR&amount=" + amountCents;
+  });
+}
+
+    function showProductDetail(productId) {
+      hideAll();
+      document.getElementById('detail_' + productId).style.display = "block";
+      window.scrollTo(0,0);
+    }
+    function hideAll() {
+      document.getElementById('mainpage').style.display = "none";
+      document.getElementById('checkoutForm').style.display = "none";
+      hideAllDetails();
+    }
+    function hideAllDetails() {
+      var details = document.querySelectorAll('.detail-page');
+      details.forEach(function(el) { el.style.display = "none"; });
+    }
+
+    const cart = [];
+
+    function addToCart(id, name, price, type) {
+      const span = document.querySelector('.qty-display-' + id);
+      let qty = parseInt(span.textContent, 10);
+      if (isNaN(qty) || qty <= 0) qty = 1;
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        cart.push({ id, name, price, qty, type });
+      }
+      updateCartBadge();
+      renderCartPanel();
+    }
+
+    function getTotals() {
+      let totalProducts = 0;
+      let totalQty = 0;
+      cart.forEach(item => {
+        totalProducts += item.price * item.qty;
+        totalQty += item.qty;
+      });
+      let shipping = 0;
+      if (totalQty > 0 && totalQty <= 2) {
+        shipping = 10;
+      } else if (totalQty >= 3 && totalQty <= 5) {
+        shipping = 13;
+      } else if (totalQty >= 6) {
+        shipping = 0;
+      }
+      const grandTotal = totalProducts + shipping;
+      return { totalProducts, shipping, grandTotal, totalQty };
+    }
+
+    function updateCartBadge() {
+      const badge = document.getElementById('cartBadge');
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      if (totalItems > 0) {
+        badge.textContent = totalItems;
+        badge.style.display = 'block';
+      } else {
+        badge.textContent = '';
+        badge.style.display = 'none';
+      }
+      const buyBtn = document.getElementById('cartBuyButton');
+      if (buyBtn) buyBtn.disabled = cart.length === 0;
+    }
+
+    function renderCartPanel() {
+      const container = document.getElementById('cartItemsContainer');
+      const totalProdEl = document.getElementById('cartProductsValue');
+      const shipEl = document.getElementById('cartShippingValue');
+      const totalEl = document.getElementById('cartTotalValue');
+
+      container.innerHTML = '';
+      if (cart.length === 0) {
+        container.innerHTML = '<div class="cart-empty">Il carrello è vuoto.</div>';
+        totalProdEl.textContent = '0€';
+        shipEl.textContent = '0€';
+        totalEl.textContent = '0€';
+        return;
+      }
+      cart.forEach(item => {
+        const sub = item.price * item.qty;
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <div class="cart-item-name">${item.name}<br><span style="font-size:0.8em; color:#999;">${item.type}</span></div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeCartQty('${item.id}', -1)">−</button>
+            <span class="qty-display">${item.qty}</span>
+            <button class="qty-btn" onclick="changeCartQty('${item.id}', 1)">+</button>
+          </div>
+          <div class="cart-item-sub">${sub}€</div>
+        `;
+        container.appendChild(row);
+      });
+      const { totalProducts, shipping, grandTotal } = getTotals();
+      totalProdEl.textContent = totalProducts + '€';
+      shipEl.textContent = (shipping === 0 ? 'Gratis' : shipping + '€');
+      totalEl.textContent = grandTotal + '€';
+
+      const buyBtn = document.getElementById('cartBuyButton');
+      if (buyBtn) buyBtn.disabled = cart.length === 0;
+    }
+
+    function changeCartQty(id, delta) {
+      const item = cart.find(p => p.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        const index = cart.findIndex(p => p.id === id);
+        if (index !== -1) cart.splice(index, 1);
+      }
+      updateCartBadge();
+      renderCartPanel();
+    }
+
+    function toggleCartPanel() {
+      const panel = document.getElementById('cartPanel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    }
+    function closeCartPanel() {
+      document.getElementById('cartPanel').style.display = 'none';
+    }
+    function emptyCart() {
+      cart.length = 0;
+      updateCartBadge();
+      renderCartPanel();
+    }
+
+    function changeInlineQty(id, delta) {
+      const span = document.querySelector('.qty-display-' + id);
+      let val = parseInt(span.textContent, 10);
+      if (isNaN(val)) val = 1;
+      val += delta;
+      if (val < 1) val = 1;
+      span.textContent = val;
+    }
+
+    function formatCheckoutTotalText() {
+      const { totalProducts, shipping, grandTotal, totalQty } = getTotals();
+      const spedizioneText = shipping === 0 ? "Spedizione: gratuita" : "Spedizione: " + shipping + "€";
+      return "Totale " + grandTotal + "€ (" + totalProducts + "€ prodotti, " + spedizioneText + ", " + totalQty + " pezzi)";
+    }
+  </script>
+</head>
+<body>
+  <!-- ICONA CARRELLO FISSA -->
+  <div class="cart-icon-wrapper">
+    <div class="cart-icon" onclick="toggleCartPanel()">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span class="cart-label">Carrello</span>
+      <span id="cartBadge" class="cart-badge"></span>
+    </div>
+  </div>
+
+  <!-- PANNELLO CARRELLO -->
+  <div id="cartPanel" class="cart-panel">
+    <h3>
+      Il tuo carrello
+      <button class="cart-close" onclick="closeCartPanel()"><i class="fa-solid fa-xmark"></i></button>
+    </h3>
+    <div id="cartItemsContainer" class="cart-items">
+      <div class="cart-empty">Il carrello è vuoto.</div>
+    </div>
+    <div class="cart-summary-line">
+      <span>Totale prodotti:</span>
+      <span id="cartProductsValue">0€</span>
+    </div>
+    <div class="cart-summary-line">
+      <span>Spedizione:</span>
+      <span id="cartShippingValue">0€</span>
+    </div>
+    <div class="cart-total">
+      <span>Totale ordine:</span>
+      <span id="cartTotalValue">0€</span>
+    </div>
+    <div style="font-size:0.8em; color:#888; margin-top:0.3em;">
+      Spedizione: 0–2 pezzi 10€, 3–5 pezzi 13€, da 6 pezzi in su gratuita.
+    </div>
+    <div class="cart-panel-footer">
+      <button class="btn-outline" onclick="emptyCart()">Svuota</button>
+      <button id="cartBuyButton" class="btn-primary" onclick="showCheckoutForm()" disabled>Acquista</button>
+    </div>
+  </div>
+
+  <header>
+    <h1>Peperoncini Premium</h1>
+    <p>Oli artigianali & Polveri extra piccanti</p>
+  </header>
+
+  <main class="container">
+    <div id="mainpage">
+      <!-- Sezione Olii -->
+      <div class="category-header">
+        <i class="fa-solid fa-droplet"></i>
+        <h2>Oli Piccanti 250ml <span style="font-weight:400; font-size:0.92em; color:#ad4600;">(12€ il pezzo)</span></h2>
+      </div>
+      <ul class="product-list">
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_naga')">
+            <i class="fa-solid fa-pepper-hot"></i> Naga Morich Red
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_naga', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_naga">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_naga', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_naga','Naga Morich Red',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_black')">
+            <i class="fa-solid fa-pepper-hot"></i> Black Phanter Striato
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_black', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_black">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_black', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_black','Black Phanter Striato',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_habRS')">
+            <i class="fa-solid fa-pepper-hot"></i> Habanero Red Savina
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_habRS', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_habRS">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_habRS', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_habRS','Habanero Red Savina',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_apoc')">
+            <i class="fa-solid fa-pepper-hot"></i> Apocalypse Chocolate
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_apoc', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_apoc">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_apoc', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_apoc','Apocalypse Chocolate',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_habChoc')">
+            <i class="fa-solid fa-pepper-hot"></i> Habanero Chocolate
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_habChoc', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_habChoc">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_habChoc', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_habChoc','Habanero Chocolate',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_death')">
+            <i class="fa-solid fa-pepper-hot"></i> Death Spiral Red
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_death', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_death">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_death', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_death','Death Spiral Red',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_bigmama')">
+            <i class="fa-solid fa-pepper-hot"></i> Big Mama Black
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_bigmama', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_bigmama">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_bigmama', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_bigmama','Big Mama Black',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_reaper_red')">
+            <i class="fa-solid fa-pepper-hot"></i> Carolina Reaper Red
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_reaper_red', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_reaper_red">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_reaper_red', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_reaper_red','Carolina Reaper Red',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_scorpion')">
+            <i class="fa-solid fa-pepper-hot"></i> Scorpion Chocolate
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_scorpion', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_scorpion">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_scorpion', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_scorpion','Scorpion Chocolate',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_reaper_choc')">
+            <i class="fa-solid fa-pepper-hot"></i> Carolina Reaper Chocolate
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_reaper_choc', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_reaper_choc">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_reaper_choc', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_reaper_choc','Carolina Reaper Chocolate',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('olio_kraken')">
+            <i class="fa-solid fa-pepper-hot"></i> Kraken Peach
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('olio_kraken', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-olio_kraken">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('olio_kraken', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('olio_kraken','Kraken Peach',12,'Olio');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+      </ul>
+
+      <div style="background:#fff4e5; border:1px solid #ffd9b3; color:#ad4600; border-radius:12px; padding:1em 1.3em; margin:1.5em 0; font-size:0.98em;">
+        <strong>Spese di spedizione:</strong> a carico dell’acquirente.<br>
+        • <b>0-2 bottiglie:</b> 10€<br>
+        • <b>3-5 bottiglie:</b> 13€<br>
+        • <b>6 o più bottiglie:</b> <span style="color:#27ae60"><b>spedizione gratuita</b></span>
+      </div>
+
+      <div class="category-header">
+        <i class="fa-solid fa-fire"></i>
+        <h2>Polveri Extra 20g <span style="font-weight:400; font-size:0.92em; color:#ad4600;">(5€ il pezzo)</span></h2>
+      </div>
+      <ul class="product-list">
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_borgred')">
+            <i class="fa-solid fa-pepper-hot"></i> Borg 9 Red
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_borgred', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_borgred">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_borgred', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_borgred','Borg 9 Red',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_borgchoc')">
+            <i class="fa-solid fa-pepper-hot"></i> Borg 9 Chocolate
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_borgchoc', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_borgchoc">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_borgchoc', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_borgchoc','Borg 9 Chocolate',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_habChoc')">
+            <i class="fa-solid fa-pepper-hot"></i> Habanero Chocolate
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_habChoc', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_habChoc">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_habChoc', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_habChoc','Habanero Chocolate',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_bhutneyde')">
+            <i class="fa-solid fa-pepper-hot"></i> Bhut x Neyde Black Orange
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_bhutneyde', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_bhutneyde">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_bhutneyde', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_bhutneyde','Bhut x Neyde Black Orange',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_habWhite')">
+            <i class="fa-solid fa-pepper-hot"></i> Habanero White
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_habWhite', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_habWhite">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_habWhite', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_habWhite','Habanero White',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_scotch')">
+            <i class="fa-solid fa-pepper-hot"></i> Scotch Bonnet
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_scotch', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_scotch">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_scotch', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_scotch','Scotch Bonnet',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_naga')">
+            <i class="fa-solid fa-pepper-hot"></i> Naga Morich Red
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_naga', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_naga">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_naga', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_naga','Naga Morich Red',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_carored')">
+            <i class="fa-solid fa-pepper-hot"></i> Carolina Red
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_carored', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_carored">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_carored', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_carored','Carolina Red',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_caroyellow')">
+            <i class="fa-solid fa-pepper-hot"></i> Carolina Yellow
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_caroyellow', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_caroyellow">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_caroyellow', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_caroyellow','Carolina Yellow',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_bigmama')">
+            <i class="fa-solid fa-pepper-hot"></i> Big Mama Mustard
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_bigmama', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_bigmama">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_bigmama', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_bigmama','Big Mama Mustard',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="product-main" onclick="showProductDetail('polveri_habCaramel')">
+            <i class="fa-solid fa-pepper-hot"></i> Habanero Caramel
+          </div>
+          <div class="product-actions">
+            <div class="qty-inline">
+              <button class="qty-btn" onclick="changeInlineQty('polveri_habCaramel', -1);event.stopPropagation();">−</button>
+              <span class="qty-display-polveri_habCaramel">1</span>
+              <button class="qty-btn" onclick="changeInlineQty('polveri_habCaramel', 1);event.stopPropagation();">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCart('polveri_habCaramel','Habanero Caramel',5,'Polvere');event.stopPropagation();">
+              <i class="fa-solid fa-plus"></i> Carrello
+            </button>
+          </div>
+        </li>
+      </ul>
+
+      <div style="background:#fff4e5; border:1px solid #ffd9b3; color:#ad4600; border-radius:12px; padding:1em 1.3em; margin:1.5em 0; font-size:0.98em;">
+        <strong>Spese di spedizione:</strong> a carico dell’acquirente.<br>
+        • <b>0-2 bottiglie:</b> 10€<br>
+        • <b>3-5 bottiglie:</b> 13€<br>
+        • <b>6 o più bottiglie:</b> <span style="color:#27ae60"><b>spedizione gratuita</b></span>
+      </div>
+
+      <div class="footer-contacts">
+        <button class="contact-toggle" onclick="toggleContatti()">Hai bisogno di aiuto? Contattami</button>
+        <div id="contactBox" class="contact-box">
+          <p><strong><i class="fa-brands fa-telegram"></i> Telegram:</strong> @peperonciniartigianali</p>
+          <p>
+            <strong><i class="fa-brands fa-instagram"></i> Instagram:</strong>
+            <a href="https://www.instagram.com/peperonciniartigianali.it?igsh=cGJvOWxheDFjaGEz" target="_blank" style="color:inherit; text-decoration:underline;">@peperonciniartigianali.it</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRECCIA + FORM CHECKOUT -->
+    <div id="checkoutBackWrapper" class="form-back-wrapper">
+      <div class="form-back-arrow" onclick="goBack()">
+        <i class="fa-solid fa-arrow-left"></i><span>Indietro</span>
+      </div>
+    </div>
+
+    <div id="checkoutForm" class="form-page">
+      <div class="category-header" style="margin-top:0.2em;">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <h2>Completa l'ordine</h2>
+      </div>
+      <form onsubmit="handleFormSubmit(event)">
+        <label class="form-label">Nome e Cognome</label>
+        <input type="text" class="form-input" name="nome_cognome" placeholder="Nome e Cognome" required style="margin-bottom: 10px;">
+
+        <label class="form-label">Email / Numero di Telefono</label>
+        <input type="text" class="form-input" name="contatto" placeholder="Email o numero di telefono" required style="margin-bottom: 10px;">
+
+        <label class="form-label">Prodotti selezionati (riepilogo)</label>
+        <textarea id="prodottiSelezionati" class="form-textarea" name="prodotti" readonly></textarea>
+
+        <label class="form-label">Indirizzo di Spedizione</label>
+        <input type="text" class="form-input" name="stato" placeholder="Stato (es. Italia)" required style="margin-bottom: 10px;">
+        <input type="text" class="form-input" name="citta" placeholder="Città" required style="margin-bottom: 10px;">
+        <input type="text" class="form-input" name="provincia" placeholder="Provincia" required style="margin-bottom: 10px;">
+        <input type="text" class="form-input" name="cap" placeholder="CAP" required style="margin-bottom: 10px;">
+        <input type="text" class="form-input" name="indirizzo" placeholder="Via e Numero Civico" required>
+
+        <div class="checkout-footer">
+          <div class="checkout-total-text" id="checkoutTotalText"></div>
+          <button type="submit" class="btn-primary">
+            Vai al Pagamento <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- DETTAGLI OLI -->
+    <div id="detail_olio_naga" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Naga Morich Red</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️</span> 4 su 5</div>
+      <div><b>Scala Scoville:</b> ~800.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Origine India-Bangladesh, profumo fruttato, sapore ricco, note di albicocca.</p>
+      <p><b>Prodotto:</b> Olio extravergine con Naga Morich Red a km zero, piccantezza intensa e persistente.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_black" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Black Phanter Striato</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️</span> 4 su 5</div>
+      <div><b>Scala Scoville:</b> ~1.000.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Fruttato, retrogusto affumicato, piccantezza alta, per intenditori.</p>
+      <p><b>Prodotto:</b> Olio aromatizzato a km zero, sapore deciso per ricette creative.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_habRS" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Habanero Red Savina</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️🌶️</span> 3 su 5</div>
+      <div><b>Scala Scoville:</b> 350.000–577.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Aroma esotico, tono dolce e pungente, ex record di piccantezza.</p>
+      <p><b>Prodotto:</b> Olio caldo, elegante, solo Habanero Red Savina locale, ottimo per salse e marinature.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_apoc" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Apocalypse Chocolate</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.500.000–2.000.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Peperoncino italiano super hot, aroma intenso, bruciore potente.</p>
+      <p><b>Prodotto:</b> Olio potentissimo, solo per amanti del fuoco, ingredienti a km zero.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_habChoc" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Habanero Chocolate</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️🌶️</span> 3 su 5</div>
+      <div><b>Scala Scoville:</b> 200.000–425.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Aroma fruttato e cioccolatoso, origine Giamaica.</p>
+      <p><b>Prodotto:</b> Olio dal gusto esotico, da Habanero Chocolate a km zero. Perfetto per piatti etnici.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_death" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Death Spiral Red</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.200.000–1.300.000+ SHU</div>
+      <p><b>Descrizione peperoncino:</b> Aroma fruttato/agrumato, bruciore intenso e immediato.</p>
+      <p><b>Prodotto:</b> Olio fortissimo, solo peperoncini locali selezionati. Per salse ultra-piccanti.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_bigmama" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Big Mama Black</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.500.000–2.000.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Frutto grande, colore cioccolato scuro, aroma affumicato e intenso.</p>
+      <p><b>Prodotto:</b> Olio aromatico, potentissimo, solo da Big Mama Black locale.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_reaper_red" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Carolina Reaper Red</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.600.000–2.200.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Il più piccante del mondo, aroma fruttato, bruciore estremo.</p>
+      <p><b>Prodotto:</b> Olio esclusivo da Carolina Reaper Red locale, solo per temerari.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_scorpion" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Scorpion Chocolate</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.200.000–2.000.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Sapore intenso e aromatico, colore marrone scuro, bruciore forte e prolungato.</p>
+      <p><b>Prodotto:</b> Olio super hot, ingredienti locali selezionati, perfetto per chi cerca il massimo.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_reaper_choc" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Carolina Reaper Chocolate</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.400.000–2.000.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Variante "cioccolato" della Reaper, sapore ancora più aromatico e forte.</p>
+      <p><b>Prodotto:</b> Olio da Carolina Reaper Chocolate locale, per chi vuole il fuoco assoluto.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_olio_kraken" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Olio di Kraken Peach</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️</span> 4 su 5</div>
+      <div><b>Scala Scoville:</b> 700.000–900.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Raro, color pesca, sapore fruttato, piccante ma meno estremo.</p>
+      <p><b>Prodotto:</b> Olio originale, ingredienti km zero, per chi vuole una piccantezza avvolgente.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <!-- DETTAGLI POLVERI -->
+    <div id="detail_polveri_borgred" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Borg 9 Red</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.000.000–1.200.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Incrocio 7 Pot, aromi intensi, bruciore devastante.</p>
+      <p><b>Prodotto:</b> Polvere da peperoncini freschi a km zero, ideale per salse, grigliate, primi piatti.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_borgchoc" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Borg 9 Chocolate</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.100.000–1.300.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Gusto ricco, terroso, forte e persistente.</p>
+      <p><b>Prodotto:</b> Polvere da Borg 9 Chocolate a km zero, per veri intenditori del piccante.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_habChoc" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Habanero Chocolate</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️🌶️</span> 3 su 5</div>
+      <div><b>Scala Scoville:</b> 200.000–425.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Aroma fruttato, sapore cioccolatoso.</p>
+      <p><b>Prodotto:</b> Polvere gourmet da peperoncini locali, perfetta per piatti etnici e fusion.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_bhutneyde" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Bhut x Neyde Black Orange</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️</span> 4 su 5</div>
+      <div><b>Scala Scoville:</b> 750.000–1.000.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Incrocio raro, profumo agrumato e intenso.</p>
+      <p><b>Prodotto:</b> Polvere intensa da peperoncini artigianali a km zero. Perfetta su piatti orientali.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_habWhite" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Habanero White</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️🌶️</span> 3 su 5</div>
+      <div><b>Scala Scoville:</b> 100.000–350.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Peperoncino bianco, fresco e fruttato.</p>
+      <p><b>Prodotto:</b> Polvere elegante per chi vuole un tocco di piccante senza esagerare. Solo a km zero.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_scotch" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Scotch Bonnet</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️🌶️</span> 3 su 5</div>
+      <div><b>Scala Scoville:</b> 100.000–350.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Caraibico, aroma fruttato, perfetto per cucine etniche.</p>
+      <p><b>Prodotto:</b> Polvere artigianale da filiera corta per sapidità unica e piccantezza tropicale.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_naga" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Naga Morich Red</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️</span> 4 su 5</div>
+      <div><b>Scala Scoville:</b> ~800.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Origine India/Bangladesh, gusto intenso.</p>
+      <p><b>Prodotto:</b> Polvere da Naga Morich Red a km zero, perfetta per esplosioni di sapore.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_carored" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Carolina Red</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.600.000–2.200.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Variante Carolina, piccantezza estrema.</p>
+      <p><b>Prodotto:</b> Polvere massima, solo da peperoncini locali selezionati.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_caroyellow" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Carolina Yellow</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️🌶️</span> 5 su 5</div>
+      <div><b>Scala Scoville:</b> 1.500.000–2.000.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Variante gialla, punta aromatica più fresca.</p>
+      <p><b>Prodotto:</b> Polvere potentissima a km zero, perfetta per rendere ogni piatto “di fuoco”.</p>
+      <button class=" btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_bigmama" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Big Mama Mustard</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️</span> 4 su 5</div>
+      <div><b>Scala Scoville:</b> 900.000–1.200.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Piccantezza notevole, gusto erbaceo e originale.</p>
+      <p><b>Prodotto:</b> Polvere da Big Mama locale, per ricette innovative e creative.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+    <div id="detail_polveri_habCaramel" class="form-page detail-page">
+      <div class="category-header"><i class="fa-solid fa-pepper-hot"></i><h2>Polvere di Habanero Caramel</h2></div>
+      <div class="spicy-level"><span style="color:#d32f2f;">🌶️🌶️🌶️</span><span style="color:#e0e0e0;">🌶️🌶️</span> 3 su 5</div>
+      <div><b>Scala Scoville:</b> 200.000–300.000 SHU</div>
+      <p><b>Descrizione peperoncino:</b> Aroma dolce, colore caramello, delicato rispetto ai super-hot.</p>
+      <p><b>Prodotto:</b> Polvere gourmet, perfetta per piatti dolci-salati a base di ingredienti locali.</p>
+      <button class="btn-outline" onclick="goBack()">Torna indietro</button>
+    </div>
+
+  </main>
+</body>
+</html>
+
